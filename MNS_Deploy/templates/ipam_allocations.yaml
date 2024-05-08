@@ -1,0 +1,68 @@
+---
+### Example
+
+Extensions:  
+  - include: Ansible
+  - include: PMP
+  - include: Helpers
+  - include: Emailer
+  - include: IPAM
+Helpers:
+  - include: TemplateHelpers
+
+InputCheck:
+  - input: var_customer_code
+  - input: var_dry_run
+
+Init:
+  set_vars:
+  - var_internal_cdi_reserved_vlanname: RESERVED GMSCDI_INT
+  - var_internal_cdi_vlanname: GMSCDI_INT (var_customer_code)
+
+DryRun:
+  out:
+  - title: "Dry Run Enabled!"
+    when: var_dry_run == true
+  pmp_get_credentials:
+  - resource: IPAM_PROD
+    account: si-svc
+    output_var: var_ipam_password
+  init_ipam:
+  - base_url: "https://10.235.132.191"
+    api_name: "sisvc"
+    user: "si-svc"
+    password: var_ipam_password
+AllocateVlan:
+  ipam_find_reserved_vlans:
+  - task: Find Reserved VLAN In IPAM For GMSCDI
+    l2domain: 170 
+    service_name: var_internal_cdi_reserved_vlanname
+    output_var: var_vlaninfo  
+
+  ipam_allocate_vlan:
+  - task: Allocate Vlan in IPAM
+    vlan_number: var_vlaninfo.number
+    vlanid: var_vlaninfo.vlanid
+    l2domain: 170
+    name: var_internal_cdi_vlanname
+    description: Allocated via network automation
+    when: var_dry_run == false
+
+AllocateSubnet:
+  ipam_get_next_available_subnet:
+  - task: Find Next Available Subnet
+    subnet: 14344
+    mask: 26
+
+  ipam_allocate_nested_subnet:
+  - task: Allocate Subnet For Internal GMSCDI 
+    subnet: 14344 
+    mask: 26
+    description: var_internal_cdi_vlanname
+    vlanid: var_vlaninfo.vlanid
+    output_var: var_cdi_subnet
+    when: var_dry_run == false  
+
+  
+
+

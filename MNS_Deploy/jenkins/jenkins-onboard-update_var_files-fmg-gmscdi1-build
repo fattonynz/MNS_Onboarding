@@ -1,0 +1,112 @@
+def short_customer_name = "MNS"
+def project_name="${short_customer_name}_Deploy"
+def parameter_email_default="sachin.disanayakapedige@spark.co.nz"
+def docker_image_name="i-dnibase:2.3"
+def agent_name="global_agent"
+
+
+
+
+def uniqueName = currentBuild.startTimeInMillis + "${short_customer_name}"
+
+
+pipeline {
+    agent any
+     parameters {  
+     string(name: 'Customer_CODE', defaultValue: "" , description: 'Ex: FLTWAN')	
+     booleanParam(name: 'GMSCDI1', defaultValue: false, description: 'Tick if this build requires a GMSCDI1')
+     booleanParam(name: 'GMSCDI2', defaultValue: false, description: 'Tick if this build requires a GMSCDI2 (125.236.76.160/27) interface.')
+     text(name: 'NETWORKS', defaultValue: '', description: 'Customer subnets that are allowed inbound to GMS_CDI. Enter one entry per line. ie. 192.168.1.0/24.')
+     string(name: 'Email', defaultValue: "${parameter_email_default}" , description: 'The email address to which the report will be delivered.')	 
+     booleanParam(name: 'DRY_RUN', defaultValue: true, description: 'When enabled , changes will not be made to the respective device')
+     }
+    environment {
+        PMP_TOKEN = credentials('pmp_token')      
+    }
+stages {
+       stage('Pull DNI Automation Library') {
+            steps {
+		        sh 'mkdir -p automation'
+		        dir('./automation') {
+                    git credentialsId: 'onpremado_sshkey',
+			        url:  'ssh://sparkado.internal.spark.co.nz:22/sparknz_security/Technical%20Services%20-%20D%20and%20I/_git/OnboardingFramework'
+		        }                
+            }
+        }
+               stage('SDP Var Files') {
+            steps {
+		        sh 'mkdir -p sdp_var_files'
+		        dir('./sdp_var_files') {
+                    git credentialsId: 'onpremado_sshkey',
+			        url:  'ssh://sparkado.internal.spark.co.nz:22/sparknz_security/Technical%20Services%20-%20D%20and%20I/_git/MNS_TEST_VAR_FILES'
+		        }                
+            }
+        } 
+
+
+stage('Stash files') {
+steps {              
+       
+        
+        stash name: "stash_" + "${short_customer_name}", includes: "**"
+        cleanWs()
+        }
+        }       
+stage('Move to Customer Folder') {
+       agent { label "${agent_name}" }  
+       options { skipDefaultCheckout() }
+       stages {
+         stage('Unstash'){
+         steps {
+           unstash name: "stash_" + "${short_customer_name}"                 
+            }                        
+            }   
+		
+stage('Build container') {
+steps {					
+  sh "docker run -di --name c_${uniqueName} -e  PMP_TOKEN=${PMP_TOKEN} -e var_gmscdi1=${GMSCDI1} -e var_gmscdi1=${GMSCDI2} -e var_networks=${NETWORKS} -e EMAIL=${EMAIL} -e var_dry_run=${DRY_RUN} -e var_customer_code=${Customer_CODE} -e template=fmg_gmscdibuild -e PROJECT=${project_name} --dns 10.241.113.215 --dns 10.241.97.215 --dns-search domm.sdp.net.nz --dns-search gensdp-sc.sdp.net.nz --dns-search uac.sdp.net --dns-search sdp.net.nz dni-container-registry.artifacts.internal.spark.co.nz/${docker_image_name}"
+    sh "docker cp ./automation/. c_${uniqueName}:/app/"       
+     sh "docker cp MNS_Deploy c_${uniqueName}:/app/projects/"	
+    sh "docker cp ./sdp_var_files/. c_${uniqueName}:/app/projects/MNS_Deploy/storage/"  
+    
+     
+  sh "docker cp ./ c_${uniqueName}:/app/projects/"						
+           
+    }
+    }                
+stage('Config Fortimanager') {
+steps {
+
+  sh "docker exec c_${uniqueName} python3 -u onboard.py"
+
+ }
+}               
+                    
+                    
+                                                             
+            }
+            post { 
+                always { 
+                
+                    sh "docker rm c_${uniqueName} -f"
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    } 
+}

@@ -1,0 +1,236 @@
+---
+# Author: Arvin Funtilon (Arvin.Funtilon@spark.co.nz) April 2023
+
+- hosts: fortimanager_sdp
+  gather_facts: no
+  collections:
+    - fortinet.fortimanager
+  connection: httpapi
+  vars:
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_validate_certs: false
+    ansible_httpapi_port: 443
+    cust_vips: []
+    cust_objects: []
+    cust_pools: [] 
+
+  tasks:
+    - name: Retrieve all the interfaces
+      fortinet.fortimanager.fmgr_fact:
+        facts:
+          selector: "system_interface"
+          params:
+            interface: "BIS"
+    - name: Retrieve all the interfaces2
+      fortinet.fortimanager.fmgr_fact:
+        facts:
+          selector: "system_interface"
+          params:
+            interface: "BIS"
+  # vars_files:
+  #   - /app/var_files/fortimanager/{{ customer }}_MDR.yml
+  # tasks:
+  #   - name: Lock the ADOM.
+  #     fmgr_dvmdb_workspace_lock:
+  #       bypass_validation: false
+  #       workspace_locking_adom: SPARK-SDP-BORDER
+  #       workspace_locking_timeout: 300
+  #       adom: SPARK-SDP-BORDER
+  #   - name: Determine vlans index to use for GMSCDI1 when GMSCDI2 is not included.
+  #     set_fact:
+  #       vlans_index_cdi1: '{{ (interfaces.vlans | length) - 1 }}'
+  #     when: not GMSCDI2 | bool
+  #   - name: Determine vlans index to use for GMSCDI1 when GMSCDI2 is included.
+  #     set_fact:
+  #       vlans_index_cdi1: '{{ (interfaces.vlans | length) - 2 }}'
+  #     when: GMSCDI2 | bool
+  #   - name: Determine vlans index to use for GMSCDI2.
+  #     set_fact:
+  #       vlans_index_cdi2: '{{ (interfaces.vlans | length) - 1 }}'
+  #     when: GMSCDI2 | bool
+  #   - name: Create GMSCDI1 interface.
+  #     fmgr_pm_config_device_global_system_interface:
+  #       device: MDRBORFWC001
+  #       state: present
+  #       pm_config_device_global_system_interface:
+  #         name: '{{ interfaces.vlans[vlans_index_cdi1 | int].name }}'
+  #         interface: '{{ interfaces.vlans[vlans_index_cdi1 | int].interface }}'
+  #         vlanid: '{{ interfaces.vlans[vlans_index_cdi1 | int].vlan_id }}'
+  #         type: '{{ interfaces.vlans[vlans_index_cdi1 | int].type }}'
+  #         role: lan
+  #         mode: static
+  #         status: up
+  #         description: Interface to Arista GMSCDI1 service.
+  #         allowaccess:
+  #           - ping
+  #         ip: '{{ interfaces.vlans[vlans_index_cdi1 | int].ip }}'
+  #         vdom: '{{ vdom_name }}'
+  #     when: GMSCDI1 | bool
+  #   - name: Create Z_GMS zone.
+  #     fmgr_pm_config_device_vdom_system_zone:
+  #       device: MDRBORFWC001
+  #       state: present
+  #       vdom: '{{ vdom_name }}'
+  #       pm_config_device_vdom_system_zone:
+  #         name: Z_GMS
+  #         interface:
+  #           - '{{ interfaces.vlans[vlans_index_cdi1 | int].name }}'
+  #     when: GMSCDI1 | bool
+  #   - name: Add GMSCDI1 to Z_GMS zone.
+  #     fmgr_pm_config_device_vdom_system_zone:
+  #       device: MDRBORFWC001
+  #       state: present
+  #       vdom: '{{ vdom_name }}'
+  #       pm_config_device_vdom_system_zone:
+  #         name: Z_GMS
+  #         interface:
+  #           - '{{ interfaces.vlans[vlans_index_cdi1 | int].name }}'
+  #     when: GMSCDI1 | bool
+  #   - name: Create GMSCDI2 interface.
+  #     fmgr_pm_config_device_global_system_interface:
+  #       device: MDRBORFWC001
+  #       state: present
+  #       pm_config_device_global_system_interface:
+  #         name: '{{ interfaces.vlans[vlans_index_cdi2 | int].name }}'
+  #         interface: '{{ interfaces.vlans[vlans_index_cdi2 | int].interface }}'
+  #         vlanid: '{{ interfaces.vlans[vlans_index_cdi2 | int].vlan_id }}'
+  #         type: '{{ interfaces.vlans[vlans_index_cdi2 | int].type }}'
+  #         role: lan
+  #         mode: static
+  #         status: up
+  #         description: Interface to Arista GMSCDI2 service.
+  #         allowaccess:
+  #           - ping
+  #         ip: '{{ interfaces.vlans[vlans_index_cdi2 | int].ip }}'
+  #         vdom: '{{ vdom_name }}'
+  #     when: GMSCDI2 | bool
+  #   - name: Add GMSCDI2 to Z_GMS zone.
+  #     fmgr_pm_config_device_vdom_system_zone:
+  #       device: MDRBORFWC001
+  #       state: present
+  #       vdom: '{{ vdom_name }}'
+  #       pm_config_device_vdom_system_zone:
+  #         name: Z_GMS
+  #         interface:
+  #           - '{{ interfaces.vlans[vlans_index_cdi1 | int].name }}'
+  #           - '{{ interfaces.vlans[vlans_index_cdi2 | int].name }}'
+  #     when: GMSCDI2 | bool
+  #   - name: Map new interface to Z_GMS normalized interface.
+  #     fmgr_dynamic_interface_dynamicmapping:
+  #       bypass_validation: false
+  #       adom: SPARK-SDP-BORDER
+  #       interface: Z_GMS
+  #       state: present
+  #       dynamic_interface_dynamicmapping:
+  #         _scope:
+  #           - name: MDRBORFWC001
+  #             vdom: '{{ vdom_name }}'
+  #         local-intf: Z_GMS
+  #     when: GMSCDI1 | bool
+  #   - name: Configure IPv4 addresses for customer networks.
+  #     fmgr_firewall_address:
+  #       bypass_validation: false
+  #       adom: SPARK-SDP-BORDER
+  #       state: present
+  #       firewall_address:
+  #         allow-routing: disable
+  #         associated-interface: any
+  #         name: '{{ item.name }}'
+  #         subnet: '{{ item.subnet }}'
+  #     loop: '{{ gmscdi.cust_subnets }}'
+  #   - name: Add subnet objects to a list.
+  #     set_fact:
+  #       cust_objects: '{{ cust_objects + [ item.name ] }}'
+  #     loop: '{{ gmscdi.cust_subnets }}'
+  #   - name: Configure dynamic mappings of network object group.
+  #     fmgr_firewall_addrgrp_dynamicmapping_v2:
+  #       bypass_validation: false
+  #       adom: SPARK-SDP-BORDER
+  #       addrgrp: DG-GMSCDI_SOURCES
+  #       state: present
+  #       proposed_method: set
+  #       firewall_addrgrp_dynamicmapping_v2:
+  #         _scope:
+  #           - name: MDRBORFWC001
+  #             vdom: '{{ vdom_name }}'
+  #         allow-routing: disable
+  #         member: '{{ cust_objects }}'
+  #     when: GMSCDI1 | bool
+  #   - name: Apply GMSCDI_BASE policy block.
+  #     fmgr_pm_config_adom_pkg_firewall_policy_block:
+  #       adom: SPARK-SDP-BORDER
+  #       state: present
+  #       pkg: '{{ policy_package_name }}'
+  #       pm_config_adom_pkg_firewall_policy_block:
+  #         _policy_block: GMSCDI_BASE
+  #     register: add_policyblock
+  #     failed_when: add_policyblock.rc != 0 and add_policyblock.rc !=-9998
+  #     when: GMSCDI1 | bool
+  #   - name: Apply GMSCDI_SCOM policy block if required.
+  #     fmgr_pm_config_adom_pkg_firewall_policy_block:
+  #       adom: SPARK-SDP-BORDER
+  #       state: present
+  #       pkg: '{{ policy_package_name }}'
+  #       pm_config_adom_pkg_firewall_policy_block:
+  #         _policy_block: GMSCDI_SCOM
+  #     register: add_policyblock
+  #     failed_when: add_policyblock.rc != 0 and add_policyblock.rc !=-9998
+  #     when: GMSCDI_SCOM | bool
+  #   - name: Apply GMSCDI_TACACS policy block if required.
+  #     fmgr_pm_config_adom_pkg_firewall_policy_block:
+  #       adom: SPARK-SDP-BORDER
+  #       state: present
+  #       pkg: '{{ policy_package_name }}'
+  #       pm_config_adom_pkg_firewall_policy_block:
+  #         _policy_block: GMSCDI_TACACS
+  #     register: add_policyblock
+  #     failed_when: add_policyblock.rc != 0 and add_policyblock.rc !=-9998
+  #     when: GMSCDI_TACACS | bool
+  #   - name: Apply GMSCDI_AM policy block if required.
+  #     fmgr_pm_config_adom_pkg_firewall_policy_block:
+  #       adom: SPARK-SDP-BORDER
+  #       state: presents
+  #       pkg: '{{ policy_package_name }}'
+  #       pm_config_adom_pkg_firewall_policy_block:
+  #         _policy_block: GMSCDI_AM
+  #     register: add_policyblock
+  #     failed_when: add_policyblock.rc != 0 and add_policyblock.rc !=-9998
+  #     when: GMSCDI_ASSET_MANAGEMENT | bool
+
+# - name: Config changes on border MDRBORRTR001/002.
+#   hosts: MDR_SDP_CUSTOMER_BORDER_ROUTERS
+#   connection: network_cli
+#   gather_facts: false
+#   vars_files:
+#     - /app/var_files/cisco/MDR_CUSTOMER_BORDER_ROUTER.yml
+#   tasks:
+#     - name: Set customer dictionary.
+#       set_fact:
+#         code: "{{ customers[customer] }}"
+#       when: 
+#       - customers[customer] is defined
+#     - name: Update WAN export prefix-list.
+#       cisco.ios.ios_config:
+#         lines:
+#         - ip prefix-list vrf-gws-ipv{{ item.0.id }}-export seq {{ item.1.seq }} permit {{ item.1.network }}
+#       when:
+#       - code.ipv is defined
+#       - item.1.service == 'GMSCDI'
+#       loop: "{{ code.ipv|subelements('prefix_export') if code.ipv }}"
+#       loop_control:
+#         label: "{{ item.0.id }}"
+#     - name: Update outbound prefix-lists for other Essentials Access that uses BGP.
+#       cisco.ios.ios_config:
+#         lines:
+#         - ip prefix-list {{ item.0.name }} seq {{ item.1.seq }} {{ item.1.action }} {{ item.1.network }}
+#       when:
+#       - code.bgp is defined
+#       - item.1.service == 'GMSCDI'
+#       loop: "{{ code.bgp.prefix_list_out|subelements('entries') if code.bgp }}"
+#       loop_control:
+#         label: "{{ item.0.name }}"
+#     - name: Copy running-config to startup-config
+#       cisco.ios.ios_config:
+#         save_when: modified
+#       when:
+#       - code is defined

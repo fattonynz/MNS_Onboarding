@@ -1,0 +1,33 @@
+---
+### to build cdi's in sdp fmg (core and border)
+
+Extensions:  
+  - include: Ansible
+  - include: PMP
+  - include: Helpers
+  - include: Emailer
+  - include: IPAM
+Helpers:
+  - include: TemplateHelpers
+
+InputCheck:
+  - input: var_customer_code
+  - input: var_dry_run
+
+Init:
+  init_ansible: []
+  set_vars:
+  - var_internal_cdi_reserved_vlanname: RESERVED GMSCDI_INT
+  - var_internal_cdi_vlanname: GMSCDI_INT (var_customer_code)
+
+DryRun:
+  out:
+  - title: "Dry Run Enabled!"
+    when: var_dry_run == true
+  
+Ansible:
+  run_ansible_playbook:
+  - playbook: provision-fmg-svc-gmscdi.yml
+    inventory: inventory.yml
+
+

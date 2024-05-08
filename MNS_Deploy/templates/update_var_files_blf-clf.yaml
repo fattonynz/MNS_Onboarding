@@ -1,0 +1,173 @@
+---
+###  this is for updating var files , it will query ipam for specific customer and update its var file 
+### currently only updates MDR_CLF var file for the customer ,
+### customer code ( vdom name) needs to be passed on to this template (var_customer_code)
+
+
+### Current Limitations - Customer Could have Multiple Internal Subnets , this will pickup only 1 . should be a easy solution to look for x number of vlans allocated to customer . at this moment this is low priority hense why im writing this instead of fixing it.
+Extensions:  
+  - include: Ansible
+  - include: PMP
+  - include: Helpers
+  - include: Emailer
+  - include: IPAM
+  - include: YamlTools
+Helpers:
+  - include: TemplateHelpers
+
+InputCheck:
+  - input: var_customer_code
+  - input: var_dry_run
+Init:
+  set_vars:
+  - var_internal_cdi_vlanname: GMSCDI_INT (var_customer_code)
+  - var_external_cdi1_vlanname: GMSCDI1_EXT (var_customer_code)
+  - var_external_cdi2_vlanname: GMSCDI2_EXT (var_customer_code)
+  - var_mdr_clf_tenant_filepath: avd_inventory/Customer_Tenants/MDR_CLF_Cust_Tenants/(var_customer_code).yml
+  - var_mdr_blf_tenant_filepath: avd_inventory/Customer_Tenants/MDR_BLF_Cust_Tenants/(var_customer_code).yml
+  pmp_get_credentials:
+  - resource: IPAM_PROD
+    account: si-svc
+    output_var: var_ipam_password
+  init_ipam:
+  - base_url: "https://10.235.132.191"
+    api_name: "sisvc"
+    user: "si-svc"
+    password: var_ipam_password
+
+DryRun:
+  out:
+  - title: "Dry Run Enabled!"
+    when: var_dry_run == true
+
+TESTYAML:
+  templatehelpers_generate_default_mdrclf:
+  - out_var: var_default_mdrclfdict
+  - out_var: var_default_mdrblfdict
+
+  yamltools_check_yaml_file_exists:
+  - task: Check Yaml Var File Exists MDR_CLF / Create
+    path: var_mdr_clf_tenant_filepath
+    create: True
+    data: var_default_mdrclfdict
+
+  - task: Check Yaml Var File Exists MDR_BLF / Create
+    path: var_mdr_blf_tenant_filepath
+    create: True
+    data: var_default_mdrblfdict
+
+  yamltools_open_file:
+  - path: var_mdr_clf_tenant_filepath
+    output_var: var_mdr_clf_dict
+  - path: var_mdr_blf_tenant_filepath
+    output_var: var_mdr_blf_dict
+
+GMSCDI_INT:
+  ipam_find_reserved_vlans:
+  - task: Find Reserved VLAN In IPAM For GMSCDI
+    l2domain: 170 
+    service_name: var_internal_cdi_vlanname
+    output_var: var_internal_cdi_vlaninfo
+  ipam_find_subnet_by_description:
+  - task: Finding Associated Subnet Of GMSCDI VLAN
+    vlanid: var_internal_cdi_vlaninfo.vlanid
+    output_var: var_internal_cdi_subnet
+
+GMSCDI1_EXT:
+  ipam_find_reserved_vlans:
+  - task: Find Reserved VLAN In IPAM For GMSCDI1 External
+    l2domain: 170 
+    service_name: var_external_cdi1_vlanname
+    output_var: var_external_cdi1_vlaninfo
+
+GMSCDI2_EXT:
+  ipam_find_reserved_vlans:
+  - task: Find Reserved VLAN In IPAM For GMSCDI2 External
+    l2domain: 170 
+    service_name: var_external_cdi2_vlanname
+    output_var: var_external_cdi2_vlaninfo
+ #   when: var_dry_run == true
+
+# GMSCDI_INT_UpdateVarFiles:                              /// this is the normal way of calling this function , however we want to check if var_internal_cdi_vlaninfo is not empty ( if its empty that means the vlan is not found on ipam)
+#   templatehelpers_varfile_add_l2vlans:
+#   - var_file: var_mdr_clf_dict
+#     vlanid: var_internal_cdi_vlaninfo.number
+#     subnet: var_internal_cdi_subnet.subnet
+#     mask: var_internal_cdi_subnet.mask
+#     data:
+#       vxlan: false  
+
+GMSCDI_INT_UpdateVarFiles:  
+
+  templatehelpers_varfile_add_l2vlans:
+  - task: "Updating MDR_CLF Var File - GMSCDI_INT"
+    var_file: var_mdr_clf_dict
+    save_path: var_mdr_clf_tenant_filepath
+    service_name: GMSCDI                  ### to generate vlan name - {customer_code}_{service_name}_{subnet}/{mask}
+    vlanid: var_internal_cdi_vlaninfo.number
+    subnet: var_internal_cdi_subnet.subnet
+    mask: var_internal_cdi_subnet.mask
+    data:
+     vxlan: false 
+    when: var_internal_cdi_vlaninfo.number !== None and var_dry_run == false ## when statement will make the entire function conditional 
+
+  - task: "Updating MDR_CLF Var File - GMSCDI1_EXT"
+    var_file: var_mdr_clf_dict
+    save_path: var_mdr_clf_tenant_filepath
+    service_name: GMSCDI1                 ### to generate vlan name - {customer_code}_{service_name}_{subnet}/{mask}
+    vlanid: var_external_cdi2_vlaninfo.number
+    subnet: 125.236.76.0
+    mask: 27
+    data:
+     vxlan: false 
+    when: var_external_cdi1_vlaninfo.number !== None and var_dry_run == false ## when statement will make the entire function conditional 
+
+  - task: "Updating MDR_CLF Var File - GMSCDI2_EXT"
+    var_file: var_mdr_clf_dict
+    save_path: var_mdr_clf_tenant_filepath
+    service_name: GMSCDI2                 ### to generate vlan name - {customer_code}_{service_name}_{subnet}/{mask}
+    vlanid: var_external_cdi2_vlaninfo.number
+    subnet: 125.236.76.160
+    mask: 27
+    data:
+     vxlan: false 
+    when: var_external_cdi2_vlaninfo.number !== None and var_dry_run == false ## when statement will make the entire function conditional 
+
+GMSCDI1_EXT_UpdateVarFiles:
+  templatehelpers_varfile_add_l2vlans:
+  - task: "Updating MDR_BLF Var File - GMSCDI1_EXT"
+    var_file: var_mdr_blf_dict
+    save_path: var_mdr_blf_tenant_filepath
+    service_name: GMSCDI1
+    vlanid: var_external_cdi1_vlaninfo.number
+    subnet: 125.236.76.0 
+    mask: 27
+    data:
+      vxlan: false 
+    when: var_external_cdi1_vlaninfo.number !== None and var_dry_run == false
+
+GMSCDI2_EXT_UpdateVarFiles:  
+  templatehelpers_varfile_add_l2vlans:
+  - task: "Updating MDR_BLF Var File - GMSCDI1_EXT"
+    var_file: var_mdr_blf_dict
+    save_path: var_mdr_blf_tenant_filepath
+    service_name: GMSCDI2
+    vlanid: var_external_cdi2_vlaninfo.number
+    subnet: 125.236.76.160
+    mask: 27
+    data:
+      vxlan: false 
+    when: var_external_cdi2_vlaninfo.number !== None and var_dry_run == false
+# UpdateVarFiles:
+#   templatehelpers_varfile_add_l2vlans:
+#   - var_file: var_mdr_clf_dict
+#     vlanid: var_internal_cdi_vlaninfo.number
+#     subnet: var_internal_cdi_subnet.subnet
+#     mask: var_internal_cdi_subnet.mask
+#     data:
+#       vxlan: false  
+
+#   yamltools_print_yaml_file:
+#   - path: var_mdr_clf_tenant_filepath
+
+
