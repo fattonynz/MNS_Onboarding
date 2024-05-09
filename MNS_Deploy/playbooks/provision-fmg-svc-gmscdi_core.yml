@@ -24,53 +24,53 @@
         workspace_locking_timeout: 300
         adom: SPARK-SDP
 
-    - name: Create Vlan Interface
-      fmgr_pm_config_device_global_system_interface:
-        device: MDRCORFWL01
-        state: present
-        pm_config_device_global_system_interface:
-          name: 'VLAN{{ item.gmscdi_int_vlan }}'
-          interface: 'Po1'
-          vlanid: '{{ item.gmscdi_int_vlan }}'
-          type: 'vlan'
-          role: lan
-          mode: static
-          status: up
-          description: GMS SDP GMP CDI.
-          ip: '{{ item.corfwl_ip }}'
-          vdom: 'SDP_CORE'
-          loop: "{{ gmscdi.corfw }}"
+    # - name: Create Vlan Interface
+    #   fmgr_pm_config_device_global_system_interface:
+    #     device: MDRCORFWL01
+    #     state: present
+    #     pm_config_device_global_system_interface:
+    #       name: 'VLAN{{ item.gmscdi_int_vlan }}'
+    #       interface: 'Po1'
+    #       vlanid: '{{ item.gmscdi_int_vlan }}'
+    #       type: 'vlan'
+    #       role: lan
+    #       mode: static
+    #       status: up
+    #       description: GMS SDP GMP CDI.
+    #       ip: '{{ item.corfwl_ip }}'
+    #       vdom: 'SDP_CORE'
+    #       loop: "{{ gmscdi.corfw }}"
 
-    - name: Add Created VLAN to GMS_GMP_SERVICES.
-      fmgr_pm_config_device_vdom_system_zone:
-        device: MDRCORFWL01
-        state: present
-        vdom: 'SDP_CORE'
-        pm_config_device_vdom_system_zone:
-          name: GMS_GMP_SERVICES
-          interface:
-            - 'VLAN{{ item.gmscdi_int_vlan }}'
-          loop: "{{ gmscdi.corfw }}"
+    # - name: Add Created VLAN to GMS_GMP_SERVICES.
+    #   fmgr_pm_config_device_vdom_system_zone:
+    #     device: MDRCORFWL01
+    #     state: present
+    #     vdom: 'SDP_CORE'
+    #     pm_config_device_vdom_system_zone:
+    #       name: GMS_GMP_SERVICES
+    #       interface:
+    #         - 'VLAN{{ item.gmscdi_int_vlan }}'
+    #       loop: "{{ gmscdi.corfw }}"
 
 
-    - name: Configure IPv4 addresses for the vlan.
-      fmgr_firewall_address:
-        bypass_validation: false
-        adom: SPARK-SDP
-        state: present
-        firewall_address:
-          allow-routing: disable
-          associated-interface: any
-          name: 'VLAN_{{ item.gmscdi_int_vlan }}_{{ item.corfwl_ip }}'
-          subnet: '{{ item.corfwl_ip }}'
-      loop: '{{ gmscdi.corfw }}'
+    # - name: Configure IPv4 addresses for the vlan.
+    #   fmgr_firewall_address:
+    #     bypass_validation: false
+    #     adom: SPARK-SDP
+    #     state: present
+    #     firewall_address:
+    #       allow-routing: disable
+    #       associated-interface: any
+    #       name: 'VLAN_{{ item.gmscdi_int_vlan }}_{{ item.corfwl_ip }}'
+    #       subnet: '{{ item.corfwl_ip }}'
+    #   loop: '{{ gmscdi.corfw }}'
 
-    - name: Add Vlan to GN_SDP_DOMM_MEMBERS Address Group
-      fmgr_firewall_addrgrp:
-        bypass_validation: false
-        adom: SPARK-SDP
-        name: GN_SDP_DOMM_MEMBERS
-        member: 'VLAN_{{ item.gmscdi_int_vlan }}_{{ item.corfwl_ip }}' 
-        state: present
-        loop: '{{ gmscdi.corfw }}'
+    # - name: Add Vlan to GN_SDP_DOMM_MEMBERS Address Group
+    #   fmgr_firewall_addrgrp:
+    #     bypass_validation: false
+    #     adom: SPARK-SDP
+    #     name: GN_SDP_DOMM_MEMBERS
+    #     member: 'VLAN_{{ item.gmscdi_int_vlan }}_{{ item.corfwl_ip }}' 
+    #     state: present
+    #     loop: '{{ gmscdi.corfw }}'
 
