@@ -39,7 +39,7 @@
           description: GMS SDP GMP CDI.
           ip: '{{ item.corfwl_ip }}'
           vdom: 'SDP_CORE'
-      loop: "{{ gmscdi.corfw }}
+      loop: '{{ gmscdi.corfw }}'
 
     # - name: Add Created VLAN to GMS_GMP_SERVICES.
     #   fmgr_pm_config_device_vdom_system_zone:
