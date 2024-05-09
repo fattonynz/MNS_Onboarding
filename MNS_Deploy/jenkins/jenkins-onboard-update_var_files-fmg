@@ -18,7 +18,7 @@ pipeline {
      booleanParam(name: 'DRY_RUN', defaultValue: true, description: 'When enabled , changes will not be made to the respective device')
      }
     environment {
-        PMP_TOKEN = credentials('pmp_token')      
+        PMP_TOKEN = "DDD"    
     }
 stages {
        stage('Pull DNI Automation Library') {
