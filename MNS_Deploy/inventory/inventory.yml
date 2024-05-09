@@ -6,7 +6,7 @@ all:
     FMG:
       hosts:
         fortimanager_sdp:
-          ansible_host: 10.245.4.116   ### test fmg - using kiwibank as there's nothing in there
+          ansible_host: 192.168.2.144   ### test fmg - using kiwibank as there's nothing in there
           ansible_user: apiadmin
-          ansible_password: "Kmnv334LKkmb@!"
+          ansible_password: "Sir272127"
           ansible_network_os: fortinet.fortimanager.fortimanager
