@@ -26,7 +26,7 @@ stages {
 		        sh 'mkdir -p automation'
 		        dir('./automation') {
                     git credentialsId: 'onpremado_sshkey',
-			        url:  'ssh://sparkado.internal.spark.co.nz:22/sparknz_security/Technical%20Services%20-%20D%20and%20I/_git/OnboardingFramework'
+			        url:  'https://github.com/fattonynz/OnboardingFramework.git'
 		        }                
             }
         }
@@ -35,7 +35,7 @@ stages {
 		        sh 'mkdir -p sdp_var_files'
 		        dir('./sdp_var_files') {
                     git credentialsId: 'onpremado_sshkey',
-			        url:  'ssh://sparkado.internal.spark.co.nz:22/sparknz_security/Technical%20Services%20-%20D%20and%20I/_git/MNS_TEST_VAR_FILES'
+			        url:  'https://github.com/fattonynz/MNS_TEST_VARS.git'
 		        }                
             }
         } 
@@ -122,7 +122,7 @@ steps {
 
                     sh '''
                      export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
-                        git clone ssh://sparkado.internal.spark.co.nz:22/sparknz_security/Technical%20Services%20-%20D%20and%20I/_git/MNS_TEST_VAR_FILES
+                        git clone https://github.com/fattonynz/MNS_TEST_VARS.git
                         
                     '''
                 }
