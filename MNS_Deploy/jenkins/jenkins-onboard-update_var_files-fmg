@@ -25,7 +25,7 @@ stages {
             steps {
 		        sh 'mkdir -p automation'
 		        dir('./automation') {
-                    git credentialsId: 'onpremado_sshkey',
+                    git credentialsId: 'e009d0ff-abd5-47f4-93ac-1d8a93681306',
 			        url:  'https://github.com/fattonynz/OnboardingFramework.git'
 		        }                
             }
@@ -34,7 +34,7 @@ stages {
             steps {
 		        sh 'mkdir -p sdp_var_files'
 		        dir('./sdp_var_files') {
-                    git credentialsId: 'onpremado_sshkey',
+                    git credentialsId: 'e009d0ff-abd5-47f4-93ac-1d8a93681306',
 			        url:  'https://github.com/fattonynz/MNS_TEST_VARS.git'
 		        }                
             }
@@ -115,7 +115,7 @@ steps {
       sh 'mkdir -p sdp_repo'
 
 
-       sshagent (credentials: ['onpremado_sshkey']) {
+       sshagent (credentials: ['e009d0ff-abd5-47f4-93ac-1d8a93681306']) {
 
 
          dir('./sdp_repo') {
