@@ -15,7 +15,7 @@
     cust_pools: [] 
 
   vars_files:
-    - /app/MNS_Deploy/storage/var_files/fortimanager/{{ var_customer_code }}_MDR.yml
+    - /app/projects/MNS_Deploy/storage/var_files/fortimanager/{{ var_customer_code }}_MDR.yml
   tasks:
     - name: Lock the ADOM.
       fmgr_dvmdb_workspace_lock:
