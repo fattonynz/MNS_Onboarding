@@ -67,10 +67,8 @@ steps {
 stage('Run Playbook') {
 steps {
 
-  sh "docker exec c_${uniqueName} python3 -u onboard.py"
-    sh "mkdir STORAGE"
-  sh "docker cp 'c_${uniqueName}:/app/projects/MNS_Deploy/storage/' 'STORAGE'"
-  stash name: "toglobal", includes: "STORAGE/**"
+sh "docker exec c_${uniqueName} ansible-playbook --extra-vars var_dry_run=${DRY_RUN} -e var_customer_code=${Customer_CODE} /app/projects/MNS_Deploy/playbooks/provision-fmg-svc-gmscdi_core.yml"
+
  }
 }               
                     
