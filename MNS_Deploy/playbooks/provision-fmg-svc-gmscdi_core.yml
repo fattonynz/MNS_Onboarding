@@ -25,7 +25,7 @@
         adom: SPARK-SDP
 
     - name: Create Vlan Interface
-      fmgr_pm_config_device_global_system_interface:
+      fortinet.fortimanager.fmgr_system_interface:
         device: MDRCORFWL01
         state: present
         pm_config_device_global_system_interface:
