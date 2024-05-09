@@ -28,6 +28,7 @@
       fortinet.fortimanager.fmgr_system_interface:
         device: MDRCORFWL01
         state: present
+        vdom: SDP_CORE
         system_interface:
           name: 'VLAN{{ item.gmscdi_int_vlan }}'
           interface: 'internal1'
@@ -38,7 +39,7 @@
           status: up
           description: GMS SDP GMP CDI.
           ip: '{{ item.corfwl_ip }}'
-          vdom: 'SDP_CORE'
+          
       loop: '{{ gmscdi.corfw }}'
 
     # - name: Add Created VLAN to GMS_GMP_SERVICES.
