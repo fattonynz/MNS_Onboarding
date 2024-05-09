@@ -79,7 +79,7 @@ sh "docker exec c_${uniqueName} ansible-playbook -i /app/projects/MSN_Deploy/inv
             post { 
                 always { 
                 
-                    sh "docker rm c_${uniqueName} -f"
+                    sh "docker rm cd_${uniqueName} -f"
                 }
             }
         }
