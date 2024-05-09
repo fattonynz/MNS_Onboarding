@@ -24,22 +24,22 @@
         workspace_locking_timeout: 300
         adom: SPARK-SDP
 
-    # - name: Create Vlan Interface
-    #   fmgr_pm_config_device_global_system_interface:
-    #     device: MDRCORFWL01
-    #     state: present
-    #     pm_config_device_global_system_interface:
-    #       name: 'VLAN{{ item.gmscdi_int_vlan }}'
-    #       interface: 'Po1'
-    #       vlanid: '{{ item.gmscdi_int_vlan }}'
-    #       type: 'vlan'
-    #       role: lan
-    #       mode: static
-    #       status: up
-    #       description: GMS SDP GMP CDI.
-    #       ip: '{{ item.corfwl_ip }}'
-    #       vdom: 'SDP_CORE'
-    #       loop: "{{ gmscdi.corfw }}"
+    - name: Create Vlan Interface
+      fmgr_pm_config_device_global_system_interface:
+        device: MDRCORFWL01
+        state: present
+        pm_config_device_global_system_interface:
+          name: 'VLAN{{ item.gmscdi_int_vlan }}'
+          interface: 'Po1'
+          vlanid: '{{ item.gmscdi_int_vlan }}'
+          type: 'vlan'
+          role: lan
+          mode: static
+          status: up
+          description: GMS SDP GMP CDI.
+          ip: '{{ item.corfwl_ip }}'
+          vdom: 'SDP_CORE'
+          loop: "{{ gmscdi.corfw }}"
 
     # - name: Add Created VLAN to GMS_GMP_SERVICES.
     #   fmgr_pm_config_device_vdom_system_zone:
