@@ -70,7 +70,7 @@ sh "ls"
 stage('Run Playbook') {
 steps {
 
-sh "docker exec c_${uniqueName} ansible-playbook -i /app/projects/MSN_Deploy/inventory/inventory.cfg --extra-vars var_dry_run=${DRY_RUN} -e var_customer_code=${Customer_CODE} /app/projects/MNS_Deploy/playbooks/provision-fmg-svc-gmscdi_core.yml"
+sh "docker exec c_${uniqueName} ansible-playbook -i /app/projects/MNS_Deploy/inventory/inventory.cfg --extra-vars var_dry_run=${DRY_RUN} -e var_customer_code=${Customer_CODE} /app/projects/MNS_Deploy/playbooks/provision-fmg-svc-gmscdi_core.yml"
 
  }
 }               
