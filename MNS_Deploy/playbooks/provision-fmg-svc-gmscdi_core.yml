@@ -28,7 +28,7 @@
       fortinet.fortimanager.fmgr_system_interface:
         device: MDRCORFWL01
         state: present
-        pm_config_device_global_system_interface:
+        system_interface:
           name: 'VLAN{{ item.gmscdi_int_vlan }}'
           interface: 'Po1'
           vlanid: '{{ item.gmscdi_int_vlan }}'
