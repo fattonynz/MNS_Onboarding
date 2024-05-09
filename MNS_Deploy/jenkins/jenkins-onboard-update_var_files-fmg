@@ -21,15 +21,7 @@ pipeline {
         PMP_TOKEN = "DDD"    
     }
 stages {
-       stage('Pull DNI Automation Library') {
-            steps {
-		        sh 'mkdir -p automation'
-		        dir('./automation') {
-                    git credentialsId: 'e009d0ff-abd5-47f4-93ac-1d8a93681306',
-			        url:  'https://github.com/fattonynz/OnboardingFramework.git'
-		        }                
-            }
-        }
+     
                stage('SDP Var Files') {
             steps {
 		        sh 'mkdir -p sdp_var_files'
@@ -50,7 +42,7 @@ steps {
         }
         }       
 stage('Move to Customer Folder') {
-       agent { label "${agent_name}" }  
+       agent { label "sdpcdi_agent" }  
        options { skipDefaultCheckout() }
        stages {
          stage('Unstash'){
@@ -71,7 +63,7 @@ steps {
            
     }
     }                
-stage('Config Fortimanager') {
+stage('Run Playbook') {
 steps {
 
   sh "docker exec c_${uniqueName} python3 -u onboard.py"
@@ -94,73 +86,6 @@ steps {
 
 
         
-                stage('Update Remote Repo') {
-	    
-            options { skipDefaultCheckout() }
-	        stages {
-	            stage('Unstash'){
-                    steps {
-                        unstash name: "toglobal"
-                       
-                    }	                
-	            }
-
-      	         
-                stage('Update Remote Repo') {
-
-when {
-                expression { env.DRY_RUN == 'false' }
-            }
-steps {
-      sh 'mkdir -p sdp_repo'
-
-
-       sshagent (credentials: ['e009d0ff-abd5-47f4-93ac-1d8a93681306']) {
-
-
-         dir('./sdp_repo') {
-
-                    sh '''
-                     export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
-                        git clone https://github.com/fattonynz/MNS_TEST_VARS.git
-                        
-                    '''
-                }
-                sh 'cp -r STORAGE/storage/* sdp_repo/MNS_TEST_VAR_FILES'
-                         dir('./sdp_repo/MNS_TEST_VAR_FILES') {
-                                              sh '''
-              
-              
-                        git add ./*
-                        git commit -m "Automated Update of Var Files "
-  export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
-  git push origin HEAD:master --force
-                    
-                    '''
-    
-                }
-    
-       }
-                 // sh 'cp -r IAC_REPO/* iac2/' 
-          
-                      
-   cleanWs()
-}
-
-
-
-
-
-
-
-                }
-            }
-            post { 
-                always { 
-                       cleanWs()
-                  
-                }
-            }
-        } 
+       
     } 
 }
