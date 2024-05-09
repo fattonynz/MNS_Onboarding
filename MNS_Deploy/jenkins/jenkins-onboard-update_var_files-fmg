@@ -27,7 +27,8 @@ stages {
 		        sh 'mkdir -p sdp_var_files'
 		        dir('./sdp_var_files') {
                     git credentialsId: 'e009d0ff-abd5-47f4-93ac-1d8a93681306',
-			        url:  'https://github.com/fattonynz/MNS_TEST_VARS.git'
+			        url:  'https://github.com/fattonynz/MNS_TEST_VARS.git',
+branch:"main"
 		        }                
             }
         } 
