@@ -29,17 +29,17 @@
         device: MDRCORFWL01
         state: present
         pm_config_device_global_system_interface:
-          name: 'VLAN{{ item.gmscdi_int_vlan }}'
+          name: 'VLAN2333'
           interface: 'internal1'
-          vlanid: '{{ item.gmscdi_int_vlan }}'
+          vlanid: '2333'
           type: 'vlan'
           role: lan
           mode: static
           status: up
           description: GMS SDP GMP CDI.
-          ip: '{{ item.corfwl_ip }}'
+          ip: '123.231.1.1/24'
           vdom: 'SDP_CORE'
-      loop: "{{ gmscdi.corfw }}"
+      #loop: "{{ gmscdi.corfw }}"
 
     # - name: Add Created VLAN to GMS_GMP_SERVICES.
     #   fmgr_pm_config_device_vdom_system_zone:
