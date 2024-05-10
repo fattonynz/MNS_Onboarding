@@ -30,7 +30,7 @@
         state: present
         pm_config_device_global_system_interface:
           name: 'VLAN{{ item.gmscdi_int_vlan }}'
-          interface: 'Po1'
+          interface: 'internal1'
           vlanid: '{{ item.gmscdi_int_vlan }}'
           type: 'vlan'
           role: lan
