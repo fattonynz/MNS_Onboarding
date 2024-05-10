@@ -25,22 +25,21 @@
         adom: SPARK-SDP
 
     - name: Create Vlan Interface
-      fortinet.fortimanager.fmgr_system_interface:
+      fmgr_pm_config_device_global_system_interface:
         device: MDRCORFWL01
         state: present
-        bypass_validation: false
-        system_interface:
+        pm_config_device_global_system_interface:
           name: 'VLAN{{ item.gmscdi_int_vlan }}'
-          interface: 'internal1'
+          interface: 'Po1'
           vlanid: '{{ item.gmscdi_int_vlan }}'
           type: 'vlan'
-          #role: lan
+          role: lan
           mode: static
           status: up
           description: GMS SDP GMP CDI.
           ip: '{{ item.corfwl_ip }}'
-          vdom: SDP_CORE
-      loop: '{{ gmscdi.corfw }}'
+          vdom: 'SDP_CORE'
+          loop: "{{ gmscdi.corfw }}"
 
     # - name: Add Created VLAN to GMS_GMP_SERVICES.
     #   fmgr_pm_config_device_vdom_system_zone:
