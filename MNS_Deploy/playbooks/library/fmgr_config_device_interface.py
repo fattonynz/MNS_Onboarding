@@ -48,7 +48,7 @@ options:
     enable_log:
         description: Enable/Disable logging for task.
         type: bool
-        default: false
+        default: true
     forticloud_access_token:
         description: Authenticate Ansible client with forticloud API access token.
         type: str
