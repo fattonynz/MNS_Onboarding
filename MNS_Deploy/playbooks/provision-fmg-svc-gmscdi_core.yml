@@ -33,9 +33,9 @@
         device: MDRCORFWL01
         state: present
         proposed_method: update
-        interface: internal1
+        
         fmgr_config_interface:
-          name: internal1
+          name: wan2
           allowaccess: ping
         
       #loop: "{{ gmscdi.corfw }}"
