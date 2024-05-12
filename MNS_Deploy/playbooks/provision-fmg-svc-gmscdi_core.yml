@@ -24,6 +24,10 @@
         workspace_locking_timeout: 300
         adom: SPARK-SDP
 
+    - name: Print Request
+      debug:
+        var: fmgr_config_interface
+
     - name: Create Vlan Interface
       fmgr_config_device_interface:
         workspace_locking_adom: SPARK-SDP
