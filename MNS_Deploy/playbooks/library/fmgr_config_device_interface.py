@@ -212,6 +212,7 @@ def main():
      connection.set_option('forticloud_access_token', module.params.get('forticloud_access_token', None))
      fmgr = NAPIManager(jrpc_urls, perobject_jrpc_urls, module_primary_key, url_params, module, connection, top_level_schema_name='data')
      fmgr.validate_parameters(params_validation_blob)
+     module.log("Request payload: %s" % fmgr.prepare_request(params_validation_blob))
      fmgr.process_partial_curd(argument_specs=module_arg_spec)
      module.exit_json(meta=module.params)
 
