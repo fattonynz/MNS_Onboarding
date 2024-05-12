@@ -26,6 +26,8 @@
     - name: Interface configuration.
       fortinet.fortimanager.fmgr_system_interface:
         bypass_validation: false
+        workspace_locking_adom: SPARK-SDP
+        workspace_locking_timeout: 300
         state: present
         system_interface:
           allowaccess:
@@ -39,6 +41,8 @@
           status: up
     - name: Create Vlan Interface
       fmgr_config_device_interface:
+        workspace_locking_adom: SPARK-SDP
+        workspace_locking_timeout: 300
         device: MDRCORFWL01
         state: present
         proposed_method: set
