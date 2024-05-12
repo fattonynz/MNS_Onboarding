@@ -168,7 +168,9 @@ def main():
      url_params = ['device']
      module_primary_key = None
      module_arg_spec = {
-        'device': {'required': True, 'type': 'str'}  
+        'device': {'required': True, 'type': 'str'},
+        'interface': {'required': False, 'type': 'str'},
+        'allowaccess': {'required': False, 'type': 'str'}
      }
      module_option_spec = get_module_arg_spec('partial crud')
      module_arg_spec.update(module_option_spec)
