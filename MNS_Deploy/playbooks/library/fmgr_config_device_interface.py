@@ -189,7 +189,7 @@ def main():
         'interface': {'required': False, 'type': 'str'}, 
         'fmgr_config_interface': {
              'type': 'dict',
-             'v_range': [['6.0.0','']],
+            
              'options':{
                   'name': {'required': True, 'type': 'str'},
                   'allowaccess': {'required': False , 'type': 'str'}
