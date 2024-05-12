@@ -75,22 +75,31 @@ options:
         type: int
         default: 300
     state:
-        description: state
+        description: The directive to create, update or delete an object.
         type: str
+        required: true
         choices:
           - present
           - absent
-          - info
     device:
         description: the device to configure
         type: str
-    allowaccess:
-        description: interface allowaccess
-        type: str
-    name:
-        description: interface
-        type: str
-    
+
+    fmgr_config_interface:
+        description: The top level parameters set
+        required: false
+        type: dict
+        suboptions:
+            name:
+                type: str
+                description: interface name
+                required: true
+            allowaccess:
+                type: str
+                description: allowaccess
+                required: false
+
+
     
 
 
@@ -107,15 +116,14 @@ EXAMPLES = '''
   tasks:
     - name: Options
       fmgr_config_device_interface:
-        # bypass_validation: false
         workspace_locking_adom: <value in [global, custom adom including root]>
         workspace_locking_timeout: 300
         device: test-device-fw1
-        allowaccess: ping
-        name: internal1
-        # rc_succeeded: [0, -2, -3, ...]
-        # rc_failed: [-2, -3, ...]
-        
+        state: present
+        fmgr_config_interface:
+            name: internal1
+            allowaccess: ping
+
    
 '''
 RETURN = '''
@@ -170,22 +178,27 @@ def main():
     ]
      
      perobject_jrpc_urls = [
-        'pm/config/device/{device}/global/system/interface'
+        'pm/config/device/{device}/global/system/interface/'
     ]
-     url_params = ['device','interface']
+     url_params = ['device']
      module_primary_key = "name"
      module_arg_spec = {
-        'device': {'required': False, 'type': 'str'},
-        'interface': {'required': False, 'type': 'str'},
-        'name': {'required': False, 'type': 'str'},
-        'allowaccess': {'required': False, 'type': 'str'},
-        "state": {'required': False, 'type': 'str'}
+        'device': {'required': False, 'type': 'str'}, 
+        'fmgr_config_interface': {
+             'type': 'dict',
+             'v_range': [['6.0.0','']],
+             'options':{
+                  'name': {'required': True, 'type': 'str'},
+                  'allowaccess': {'required': False , 'type': 'str'}
+             }
+        }      
+
      }
-     module_option_spec = get_module_arg_spec('partial crud')
+     module_option_spec = get_module_arg_spec('full crud')
      module_arg_spec.update(module_option_spec)
      params_validation_blob = []
      check_galaxy_version(module_arg_spec)
-     module = AnsibleModule(argument_spec=check_parameter_bypass(module_arg_spec, 'fmgr_config_device_interface'),
+     module = AnsibleModule(argument_spec=check_parameter_bypass(module_arg_spec, 'fmgr_config_interface'),
                            supports_check_mode=False)
      if not module._socket_path:
           module.fail_json(msg='MUST RUN IN HTTPAPI MODE')

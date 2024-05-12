@@ -27,9 +27,11 @@
     - name: Create Vlan Interface
       fmgr_config_device_interface:
         device: MDRCORFWL01
-        interface: internal1
-        allowaccess: ping https
-        name: internal1
+        state: present
+        fmgr_config_interface:
+           name: internal1
+           allowaccess: ping https
+        
       #loop: "{{ gmscdi.corfw }}"
 
     # - name: Add Created VLAN to GMS_GMP_SERVICES.
