@@ -174,7 +174,7 @@ from ansible_collections.fortinet.fortimanager.plugins.module_utils.napi import 
 from ansible_collections.fortinet.fortimanager.plugins.module_utils.common import get_module_arg_spec
 def main():
      jrpc_urls = [
-        '/pm/config/device/{device}/global/system/interface'
+        '/pm/config/device/{device}/global/system/interface/'
     ]
      
      perobject_jrpc_urls = [
