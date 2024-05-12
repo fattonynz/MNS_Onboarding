@@ -32,7 +32,7 @@
         workspace_locking_timeout: 300
         device: MDRCORFWL01
         state: present
-        proposed_method: update
+        proposed_method: set
         
         fmgr_config_interface:
           name: wan2
