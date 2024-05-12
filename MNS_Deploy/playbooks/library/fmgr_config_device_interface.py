@@ -176,6 +176,7 @@ def main():
      module_primary_key = "name"
      module_arg_spec = {
         'device': {'required': False, 'type': 'str'},
+        'interface': {'required': False, 'type': 'str'},
         'name': {'required': False, 'type': 'str'},
         'allowaccess': {'required': False, 'type': 'str'},
         "state": {'required': False, 'type': 'str'}
