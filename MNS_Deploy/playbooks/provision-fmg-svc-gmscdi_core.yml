@@ -30,9 +30,9 @@
         workspace_locking_timeout: 300
         device: MDRCORFWL01
         state: present
-        proposed_method: set
+        proposed_method: get
         fmgr_config_interface:
-        - name: internal1
+          name: internal1
           allowaccess: ping
         
       #loop: "{{ gmscdi.corfw }}"
