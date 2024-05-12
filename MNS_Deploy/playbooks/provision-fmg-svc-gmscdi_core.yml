@@ -29,7 +29,7 @@
         device: MDRCORFWL01
        
         allowaccess: ping https
-        interface: internal1
+        name: internal1
       #loop: "{{ gmscdi.corfw }}"
 
     # - name: Add Created VLAN to GMS_GMP_SERVICES.

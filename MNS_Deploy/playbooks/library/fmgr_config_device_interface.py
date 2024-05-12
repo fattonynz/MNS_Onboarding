@@ -173,12 +173,12 @@ def main():
         'pm/config/device/{device}/global/system/interface/{interface}'
     ]
      url_params = ['device','interface']
-     module_primary_key = None
+     module_primary_key = "name"
      module_arg_spec = {
-      
+        'device': {'required': False, 'type': 'str'},
         'name': {'required': False, 'type': 'str'},
-        'allowaccess': {'required': False, 'type': 'str'}
-        
+        'allowaccess': {'required': False, 'type': 'str'},
+        "state": {'required': False, 'type': 'str'}
      }
      module_option_spec = get_module_arg_spec('partial crud')
      module_arg_spec.update(module_option_spec)
