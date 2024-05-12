@@ -213,7 +213,7 @@ def main():
      fmgr = NAPIManager(jrpc_urls, perobject_jrpc_urls, module_primary_key, url_params, module, connection, top_level_schema_name='data')
      fmgr.validate_parameters(params_validation_blob)
     
-     fmgr.process_partial_curd(argument_specs=module_arg_spec)
+     fmgr.process_curd(argument_specs=module_arg_spec)
      module.exit_json(meta=module.params)
 
 if __name__ == '__main__':
