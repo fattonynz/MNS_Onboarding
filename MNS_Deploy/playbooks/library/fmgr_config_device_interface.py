@@ -175,7 +175,7 @@ def main():
      url_params = ['device','interface']
      module_primary_key = "name"
      module_arg_spec = {
-      
+        'device': {'required': False, 'type': 'str'},
         'name': {'required': False, 'type': 'str'},
         'allowaccess': {'required': False, 'type': 'str'},
         "state": {'required': False, 'type': 'str'}
