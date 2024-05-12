@@ -172,7 +172,7 @@ def main():
      perobject_jrpc_urls = [
         'pm/config/device/{device}/global/system/interface/{interface}'
     ]
-     url_params = ['device']
+     url_params = ['device','interface']
      module_primary_key = None
      module_arg_spec = {
         'device': {'required': True, 'type': 'str'},
