@@ -23,7 +23,20 @@
         workspace_locking_adom: SPARK-SDP
         workspace_locking_timeout: 300
         adom: SPARK-SDP
-
+    - name: Interface configuration.
+      fortinet.fortimanager.fmgr_system_interface:
+        bypass_validation: false
+        state: present
+        system_interface:
+          allowaccess:
+            - ping
+          ip: "222.222.22.2/24"
+          mtu: 1500
+          name: port4
+          serviceaccess:
+            - fgtupdates
+          speed: auto # <value in [auto, 10full, 10half, ...]>
+          status: up
     - name: Create Vlan Interface
       fmgr_config_device_interface:
         device: MDRCORFWL01
