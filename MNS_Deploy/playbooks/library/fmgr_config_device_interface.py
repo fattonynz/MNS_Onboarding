@@ -198,7 +198,7 @@ def main():
 
      }
      module_option_spec = get_module_arg_spec('full crud')
-     print(module_arg_spec)
+   
      module_arg_spec.update(module_option_spec)
      params_validation_blob = []
      check_galaxy_version(module_arg_spec)
