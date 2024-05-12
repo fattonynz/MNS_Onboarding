@@ -84,7 +84,9 @@ options:
     device:
         description: the device to configure
         type: str
-
+    interface:
+        description: the device to configure
+        type: str
     fmgr_config_interface:
         description: The top level parameters set
         required: false
@@ -178,12 +180,13 @@ def main():
     ]
      
      perobject_jrpc_urls = [
-        'pm/config/device/{device}/global/system/interface/'
+        'pm/config/device/{device}/global/system/interface/{interface}'
     ]
      url_params = ['device']
-     module_primary_key = "name"
+     module_primary_key = 'device'
      module_arg_spec = {
-        'device': {'required': False, 'type': 'str'}, 
+        'device': {'required': True, 'type': 'str'}, 
+        'interface': {'required': False, 'type': 'str'}, 
         'fmgr_config_interface': {
              'type': 'dict',
              'v_range': [['6.0.0','']],
