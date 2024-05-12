@@ -74,6 +74,13 @@ options:
         description: The maximum time in seconds to wait for other user to release the workspace lock.
         type: int
         default: 300
+    state:
+        description: state
+        type: str
+        choices:
+          - present
+          - absent
+          - info
     device:
         description: the device to configure
         type: str
