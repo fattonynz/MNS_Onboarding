@@ -30,7 +30,7 @@
         state: present
         fmgr_config_interface:
            name: internal1
-           allowaccess: ping https
+           allowaccess: ping
         
       #loop: "{{ gmscdi.corfw }}"
 
