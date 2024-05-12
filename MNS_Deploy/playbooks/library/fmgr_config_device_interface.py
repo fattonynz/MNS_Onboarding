@@ -87,7 +87,7 @@ options:
     allowaccess:
         description: interface allowaccess
         type: str
-    interface:
+    name:
         description: interface
         type: str
     
@@ -112,7 +112,7 @@ EXAMPLES = '''
         workspace_locking_timeout: 300
         device: test-device-fw1
         allowaccess: ping
-        interface: internal1
+        name: internal1
         # rc_succeeded: [0, -2, -3, ...]
         # rc_failed: [-2, -3, ...]
         
@@ -175,10 +175,10 @@ def main():
      url_params = ['device','interface']
      module_primary_key = None
      module_arg_spec = {
-        'device': {'required': True, 'type': 'str'},
-        'interface': {'required': False, 'type': 'str'},
-        'allowaccess': {'required': False, 'type': 'str'},
-        "state": {'required': False, 'type': 'str'}
+      
+        'name': {'required': False, 'type': 'str'},
+        'allowaccess': {'required': False, 'type': 'str'}
+        
      }
      module_option_spec = get_module_arg_spec('partial crud')
      module_arg_spec.update(module_option_spec)
@@ -190,7 +190,7 @@ def main():
           module.fail_json(msg='MUST RUN IN HTTPAPI MODE')
      connection = Connection(module._socket_path)
      connection.set_option('access_token', module.params.get('access_token', None))
-     connection.set_option('enable_log', module.params.get('enable_log', False))
+     connection.set_option('enable_log', module.params.get('enable_log',True))
      connection.set_option('forticloud_access_token', module.params.get('forticloud_access_token', None))
      fmgr = NAPIManager(jrpc_urls, perobject_jrpc_urls, module_primary_key, url_params, module, connection, top_level_schema_name='data')
      fmgr.validate_parameters(params_validation_blob)
