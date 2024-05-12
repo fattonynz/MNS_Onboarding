@@ -1,7 +1,7 @@
 def short_customer_name = "MNS"
 def project_name="${short_customer_name}_Deploy"
 def parameter_email_default="sachin.disanayakapedige@spark.co.nz"
-def docker_image_name="i-dnibase:2.9"
+def docker_image_name="i-dnibase:2.3"
 def agent_name="global_agent"
 
 
